@@ -37,10 +37,14 @@ def get_movies3(how_many, list_type):
 def get_single_movie(movie_id):
     return call_tmdb_api(f'movie/{movie_id}')
 
-def get_single_movie_cast(movie_id):
+"""def get_single_movie_cast(movie_id):
     endpoint = f"https://api.themoviedb.org/3/movie/{movie_id}/credits"
     headers = {
         "Authorization": f"Bearer {API_TOKEN}"
     }
     response = requests.get(endpoint, headers=headers)
     return response.json()["cast"] # a czemu ten dopisek? Tworzymy cały czas jeden plik .json i wybieramy konkretne klucze z wartościami?"""
+
+def get_single_movie_cast(movie_id):
+    response = call_tmdb_api(f"movie/{movie_id}/credits")
+    return response["cast"] # a czemu ten dopisek? Tworzymy cały czas jeden plik .json i wybieramy konkretne klucze z wartościami?"""

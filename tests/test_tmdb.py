@@ -20,7 +20,7 @@ def test_call_tmdb_api(monkeypatch):
     # odwołanie się specjalnym modułem monkeypatch do odpowiedniej funkcji w testowanym właśnie skrypcie wraz z przypisaniem również funkcji od klasy Mock()
     monkeypatch.setattr("tmdb_client.requests.get", requests_mock)
 
-    movie_id = tmdb_client.get_popular_movies('upcoming')
+    movie_id = tmdb_client.get_single_movie('upcoming')
     assert movie_id == mock_popular_movies
 
 def test_get_movie_image_size(monkeypatch):
@@ -39,16 +39,28 @@ def test_get_movie_image_size(monkeypatch):
     # przywołujemy oryginalną funkcję
     poster_size = tmdb_client.get_poster_url(size='w342',poster_api_path='.jpg')
     # porównujemy
-    assert poster_size == recall_path
+    assert poster_size is recall_path
 
-def test_get_single_movie_cast(monkeypatch):
+"""def test_get_single_movie_cast(monkeypatch): #złe
     # id, które będzie zwracać przysłonięte "zapytanie do API"
-    mock_single_movie = "123456"
+    mock_single_movie = 1234434
 
     requests_mock = Mock()
     response = requests_mock.return_value
-    response.json.return_value = mock_single_movie
-    monkeypatch.setattr("tmdb_client.requests.get", requests_mock)
-    movie_id = tmdb_client.get_single_movie_cast(movie_id="123456")
+api_mockt.get_single_movie_cast(movie_id=mock_single_movie)
     assert movie_id == mock_single_movie
+"""
+"""def test_get_single_movie_cast(monkeypatch): # złe bo dalej wyciąga w w setattr json, którego nie może odczytać ze wzglęfu na konkretny słownik 'cast'
+    api_mock = Mock(return_value={'cast':['Actor 1','Actor 2']})
+    movie_id = 10
+    monkeypatch.setattr("tmdb_client.requests.get", api_mock)
+    get_movie_cast = tmdb_client.get_single_movie_cast(movie_id=movie_id)
+    assert get_movie_cast is not None"""
 
+def test_get_single_movie_cast(monkeypatch):
+    api_mock = Mock(return_value={'cast':['Actor 1','Actor 2']})
+    movie_id = 568124
+    monkeypatch.setattr("tmdb_client.call_tmdb_api", api_mock)
+    get_movie_cast = tmdb_client.get_single_movie_cast(movie_id=movie_id)
+    assert get_movie_cast == ['Actor 1','Actor 2']
+    # lub assert is not None
